@@ -1,0 +1,29 @@
+{
+    "name": "vim-statusline-generator",
+    "description": "A vanilla vim statusline generator",
+    "version": "1.0.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tomdaly/vim-statusline-generator.git"
+    },
+    "author": "tomdaly",
+    "keywords": [
+        "vim",
+        "statusline",
+        "javascript",
+        "js"
+    ],
+    "licenses": [
+        {
+            "name": "GNU General Public Licence v3.0",
+            "url": ""
+        }
+    ],
+    "homepage": "http://tdaly.co.uk/projects/vim-statusline-generator",
+    "devDependencies": {
+        "jasmine-core": "^2.3.2",
+        "karma": "^0.12.31",
+        "karma-firefox-launcher": "^0.1.4",
+        "karma-jasmine": "^0.3.5"
+    }
+}

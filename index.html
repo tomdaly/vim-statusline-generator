@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Vim Statusline Generator | tdaly.co.uk</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+    button {
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 style="text-align:center;">Vim Statusline Generator</h1>
+      <div class="jumbotron">
+        <div class="panel panel-default" style="text-align:center;">
+          statusline preview:<br>
+          <div class="panel-body" style="border: 1px solid black;">
+            <span id="leftPreview" style="float:left;"> </span><span id="rightPreview" style="float:right;"> </span>
+            <br>
+          </div>
+        </div>
+        <hr>
+        <div>
+          <button id="clearButton" type="button" class="btn btn-outline-danger">Clear</button>
+          <button id="leftButton" type="button" class="btn btn-secondary">Left Align</button>
+          <button id="rightButton" type="button" class="btn btn-secondary">Right Align</button>
+        </div>
+        <br>
+        <div id="options"></div>
+      </div>
+      <div style="text-align: center;">
+        .vimrc code:<br>
+        <textarea type="text" id="output" cols="80" rows="10" value="" style="font-family:monospace;resize:none;" readonly></textarea>
+      </div>
+    </div>
+
+    <br>
+    <footer style="text-align: center">
+      <a href="https://github.com/tomdaly/vim-statusline-generator">GitHub Source</a>
+       | <a href="http://tdaly.co.uk/posts/">tdaly.co.uk</a>
+    </footer>
+    <script src="Generator.js"></script>
+    <script src="DomInit.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  </body>
+</html>
