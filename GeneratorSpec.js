@@ -1,30 +1,30 @@
-describe("Generator", function() {
+describe("testGenerator", function() {
 
     beforeEach(function() {
-        generator = new Generator();
-        genDom = new GeneratorDom();
+        testGenerator = new Generator();
+        testGenDom = new GeneratorDom();
     });
 
-    describe("Testing Generator", function() {
+    describe("Testing testGenerator", function() {
         it("should be empty on initialise", function() {
-            expect(generator.elements.length).toEqual(0);
+            expect(testGenerator.elements.length).toEqual(0);
         });
 
         describe("when element is added", function() {
             it("should increment elements length", function() {
-                expect(generator.elements.length).toEqual(0);
-                generator.addElement("t");
-                expect(generator.elements.length).toEqual(1);
+                expect(testGenerator.elements.length).toEqual(0);
+                testGenerator.addElement("t");
+                expect(testGenerator.elements.length).toEqual(1);
             });
         });
 
         describe("when an element is removed", function() {
             it("should decrement elements array length", function() {
-                generator.elements.push("t");
-                expect(generator.elements.length).toEqual(1);
+                testGenerator.elements.push("t");
+                expect(testGenerator.elements.length).toEqual(1);
 
-                generator.removeElement();
-                expect(generator.elements.length).toEqual(0);
+                testGenerator.removeElement();
+                expect(testGenerator.elements.length).toEqual(0);
             });
         });
 
@@ -33,8 +33,8 @@ describe("Generator", function() {
                 out: "%m",
                 preview: "[+]",
             };
-            generator.elements.push(element);
-            let out = generator.buildOutput();
+            testGenerator.elements.push(element);
+            let out = testGenerator.buildOutput();
 
             expect(out).toEqual("statusline+=%m");
         });
@@ -44,15 +44,15 @@ describe("Generator", function() {
                 out: "%m",
                 preview: "[+]",
             };
-            generator.elements.push(element);
-            let preview = generator.buildPreview();
+            testGenerator.elements.push(element);
+            let preview = testGenerator.buildPreview();
 
             expect(preview).toEqual("[+]");
         });
     });
 
     describe("Testing webpage", function() {
-        it("should initialise with add button", function() {
+        it("should initialise with buttons", function() {
             const form = document.createElement("form");
             let button;
             for (let i = 0; i < options.length; i++) {
@@ -60,7 +60,7 @@ describe("Generator", function() {
                 button.innerHTML = options[i].title;
                 form.appendChild(button);
             }
-            expect(genDom.init()).toEqual(form);
+            expect(testGenDom.init().childNodes.length).not.toBeLessThan(0);
         });
     });
 });

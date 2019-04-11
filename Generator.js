@@ -48,8 +48,13 @@ GeneratorDom.prototype.init = function() {
     let button;
     for (let i = 0; i < options.length; i++) {
         button = document.createElement("button");
+        button.setAttribute("class", "btn btn-primary");
         button.innerHTML = options[i].title;
         form.appendChild(button);
     }
     return form;
 };
+
+const genDom = new GeneratorDom();
+document.querySelector("#options").appendChild(genDom.init());
+const generator = new Generator();
