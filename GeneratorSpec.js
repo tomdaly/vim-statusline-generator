@@ -8,7 +8,6 @@ describe("Generator", function() {
         expect(generator.elements.length).toEqual(0);
     });
 
-
     describe("when element is added", function() {
         it("should increment elements length", function() {
             expect(generator.elements.length).toEqual(0);
@@ -25,5 +24,12 @@ describe("Generator", function() {
             generator.removeElement();
             expect(generator.elements.length).toEqual(0);
         });
+    });
+
+    it("should build a statusline string", function() {
+        generator.elements.push("t");
+        let out = generator.buildString();
+
+        expect(out).toEqual("statusline+=t");
     });
 });
