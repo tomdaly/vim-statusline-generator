@@ -1,5 +1,13 @@
 "use strict";
 
+let options = [
+    {
+        title: "Modified flag",
+        out: "%m",
+        preview: "[+]"
+    },
+];
+
 function Generator() {
     this.elements = [];
 }
@@ -31,4 +39,17 @@ Generator.prototype.buildPreview = function() {
         preview += curr.preview;
     }
     return preview;
+};
+
+function GeneratorDom() { }
+
+GeneratorDom.prototype.init = function() {
+    const form = document.createElement("form");
+    let button;
+    for (let i = 0; i < options.length; i++) {
+        button = document.createElement("button");
+        button.innerHTML = options[i].title;
+        form.appendChild(button);
+    }
+    return form;
 };
