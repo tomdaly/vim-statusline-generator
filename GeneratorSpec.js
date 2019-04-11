@@ -26,10 +26,25 @@ describe("Generator", function() {
         });
     });
 
-    it("should build a statusline string", function() {
-        generator.elements.push("t");
-        let out = generator.buildString();
+    it("should build statusline code", function() {
+        let element = {
+            out: "%m",
+            preview: "[+]",
+        };
+        generator.elements.push(element);
+        let out = generator.buildOutput();
 
-        expect(out).toEqual("statusline+=t");
+        expect(out).toEqual("statusline+=%m");
+    });
+
+    it("should build statusline preview", function() {
+        let element = {
+            out: "%m",
+            preview: "[+]",
+        };
+        generator.elements.push(element);
+        let preview = generator.buildPreview();
+
+        expect(preview).toEqual("[+]");
     });
 });

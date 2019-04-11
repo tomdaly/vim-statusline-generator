@@ -12,13 +12,23 @@ Generator.prototype.removeElement = function() {
     this.elements.pop();
 }
 
-Generator.prototype.buildString = function() {
-    let statuslineString = "";
+Generator.prototype.buildOutput = function() {
+    let output = "";
     if (this.elements.length) {
-        statuslineString = "statusline+=";
+        output = "statusline+=";
     }
-    while (this.elements.length) {
-        statuslineString += this.elements.pop();
+    for (let i = 0; i < this.elements.length; i++) {
+        let curr = this.elements[i];
+        output += curr.out;
     }
-    return statuslineString;
+    return output;
+};
+
+Generator.prototype.buildPreview = function() {
+    let preview = "";
+    for (let i = 0; i < this.elements.length; i++) {
+        let curr = this.elements[i];
+        preview += curr.preview;
+    }
+    return preview;
 };
