@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Vim Statusline Generator | tdaly.co.uk</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="container">
+      <h1 style="text-align:center;">Vim Statusline Generator</h1>
+      <div class="jumbotron">
+        <div class="panel panel-default" style="text-align:center;">
+          <div class="panel-body">
+            .vimrc code:
+            <input type="text" size="80" id="output" value="" style="font-family:monospace;" readonly>
+            <br>
+            statusline view:
+            <input type="text" size="80" id="preview" value="" style="font-family:monospace;" readonly>
+          </div>
+        </div>
+        <hr>
+        <button id="clearButton" type="button" class="btn btn-outline-dark">Clear</button><br><br>
+        <div id="options"></div>
+      </div>
+    </div>
+
+    <script src="Generator.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  </body>
+</html>
