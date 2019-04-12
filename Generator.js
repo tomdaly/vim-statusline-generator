@@ -302,6 +302,7 @@ GeneratorDom.prototype.alignLeft = function(state) {
     }
 };
 
+
 const genDom = new GeneratorDom();
 document.getElementById("options").appendChild(genDom.init());
 document.getElementById("clearButton").addEventListener("click", function() {
