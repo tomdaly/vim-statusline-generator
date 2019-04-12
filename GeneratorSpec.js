@@ -49,6 +49,13 @@ describe("testGenerator", function() {
 
             expect(preview).toEqual("[+]");
         });
+
+        it("should clear elements", function() {
+            testGenerator.elements.push("a");
+            expect(testGenerator.elements.length).toEqual(1);
+            testGenerator.removeAllElements();
+            expect(testGenerator.elements.length).toEqual(0);
+        });
     });
 
     describe("Testing webpage", function() {
@@ -75,6 +82,24 @@ describe("testGenerator", function() {
 
             expect(output.value).toEqual("statusline+=%m");
             expect(preview.value).toEqual("[+]");
+            document.body.removeChild(output);
+            document.body.removeChild(preview);
+        });
+
+        it("should clear output and preview", function() {
+            const output = document.createElement("input");
+            const preview = document.createElement("input");
+            output.setAttribute("id", "output");
+            preview.setAttribute("id", "preview");
+            output.setAttribute("value", "foo");
+            preview.setAttribute("value", "bar");
+            document.body.appendChild(output);
+            document.body.appendChild(preview);
+
+            testGenDom.clear();
+
+            expect(output.value).toEqual("");
+            expect(preview.value).toEqual("");
             document.body.removeChild(output);
             document.body.removeChild(preview);
         });

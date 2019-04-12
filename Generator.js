@@ -20,6 +20,12 @@ Generator.prototype.removeElement = function() {
     this.elements.pop();
 };
 
+Generator.prototype.removeAllElements = function() {
+    while (this.elements.length) {
+        this.elements.pop();
+    }
+};
+
 Generator.prototype.buildOutput = function() {
     let output = "";
     if (this.elements.length) {
@@ -70,6 +76,17 @@ GeneratorDom.prototype.update = function() {
     preview.setAttribute("value", this.generator.buildPreview());
 };
 
+GeneratorDom.prototype.clear = function() {
+    const output = document.getElementById("output");
+    const preview = document.getElementById("preview");
+    output.setAttribute("value", "");
+    preview.setAttribute("value", "");
+    this.generator.removeAllElements();
+};
+
 
 const genDom = new GeneratorDom();
 document.getElementById("options").appendChild(genDom.init());
+document.getElementById("clearButton").addEventListener("click", function() {
+    genDom.clear();
+});
