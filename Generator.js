@@ -10,15 +10,15 @@ let options = [
 
 function Generator() {
     this.elements = [];
-}
+};
 
 Generator.prototype.addElement = function(element) {
     this.elements.push(element);
-}
+};
 
 Generator.prototype.removeElement = function() {
     this.elements.pop();
-}
+};
 
 Generator.prototype.buildOutput = function() {
     let output = "";
@@ -41,20 +41,35 @@ Generator.prototype.buildPreview = function() {
     return preview;
 };
 
-function GeneratorDom() { }
+function GeneratorDom() { 
+    this.generator = new Generator();
+};
 
 GeneratorDom.prototype.init = function() {
     const form = document.createElement("form");
     let button;
+    let _this = this;
     for (let i = 0; i < options.length; i++) {
         button = document.createElement("button");
-        button.setAttribute("class", "btn btn-primary");
+        button.setAttribute("type", "button");
+        button.setAttribute("class", "btn btn-dark");
         button.innerHTML = options[i].title;
+        button.addEventListener("click", function() {
+            _this.generator.addElement(options[i]);
+            _this.update();
+        }, false);
         form.appendChild(button);
     }
     return form;
 };
 
+GeneratorDom.prototype.update = function() {
+    const output = document.getElementById("output");
+    const preview = document.getElementById("preview");
+    output.setAttribute("value", this.generator.buildOutput());
+    preview.setAttribute("value", this.generator.buildPreview());
+};
+
+
 const genDom = new GeneratorDom();
-document.querySelector("#options").appendChild(genDom.init());
-const generator = new Generator();
+document.getElementById("options").appendChild(genDom.init());

@@ -62,5 +62,21 @@ describe("testGenerator", function() {
             }
             expect(testGenDom.init().childNodes.length).not.toBeLessThan(0);
         });
+
+        it("should update output and preview text", function() {
+            const output = document.createElement("input");
+            const preview = document.createElement("input");
+            output.setAttribute("id", "output");
+            preview.setAttribute("id", "preview");
+            document.body.appendChild(output);
+            document.body.appendChild(preview);
+            testGenDom.generator.addElement(options[0]);
+            testGenDom.update();
+
+            expect(output.value).toEqual("statusline+=%m");
+            expect(preview.value).toEqual("[+]");
+            document.body.removeChild(output);
+            document.body.removeChild(preview);
+        });
     });
 });
