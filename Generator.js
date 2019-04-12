@@ -59,36 +59,53 @@ let options = [
 ];
 
 function Generator() {
-    this.elements = [];
+    this.leftElements = [];
+    this.rightElements = [];
 };
 
-Generator.prototype.addElement = function(element) {
-    this.elements.push(element);
-};
-
-Generator.prototype.removeElement = function() {
-    this.elements.pop();
+Generator.prototype.addElement = function(element, isLeftAlign) {
+    if (isLeftAlign) {
+        this.leftElements.push(element);
+    } else {
+        this.rightElements.push(element);
+    }
 };
 
 Generator.prototype.removeAllElements = function() {
-    while (this.elements.length) {
-        this.elements.pop();
+    while (this.leftElements.length) {
+        this.leftElements.pop();
+    }
+    while (this.rightElements.length) {
+        this.rightElements.pop();
     }
 };
 
 Generator.prototype.buildOutput = function() {
     let output = "";
-    for (let i = 0; i < this.elements.length; i++) {
-        let curr = this.elements[i];
+    for (let i = 0; i < this.leftElements.length; i++) {
+        let curr = this.leftElements[i];
+        output += "statusline+=" + curr.out + "\n";
+    }
+    if (this.rightElements.length) {
+        output += "statusline+=%=\n";
+    }
+    for (let i = 0; i < this.rightElements.length; i++) {
+        let curr = this.rightElements[i];
         output += "statusline+=" + curr.out + "\n";
     }
     return output;
 };
 
-Generator.prototype.buildPreview = function() {
+Generator.prototype.buildPreview = function(align) {
     let preview = "";
-    for (let i = 0; i < this.elements.length; i++) {
-        let curr = this.elements[i];
+    let elements;
+    if (align == "left") {
+        elements = this.leftElements;
+    } else {
+        elements = this.rightElements;
+    }
+    for (let i = 0; i < elements.length; i++) {
+        let curr = elements[i];
         preview += curr.preview;
     }
     return preview;
@@ -96,6 +113,8 @@ Generator.prototype.buildPreview = function() {
 
 function GeneratorDom() { 
     this.generator = new Generator();
+    this.leftAlign = true;
+    this.alignLeft(true);
 };
 
 GeneratorDom.prototype.init = function() {
@@ -108,7 +127,7 @@ GeneratorDom.prototype.init = function() {
         button.setAttribute("class", "btn btn-dark");
         button.innerHTML = options[i].title;
         button.addEventListener("click", function() {
-            _this.generator.addElement(options[i]);
+            _this.generator.addElement(options[i], _this.leftAlign);
             _this.update();
         }, false);
         form.appendChild(button);
@@ -117,23 +136,54 @@ GeneratorDom.prototype.init = function() {
 };
 
 GeneratorDom.prototype.update = function() {
+    this.updateOutput();
+    this.updatePreview();
+};
+
+GeneratorDom.prototype.updateOutput = function() {
     const output = document.getElementById("output");
-    const preview = document.getElementById("preview");
     output.value = this.generator.buildOutput();
-    preview.value = this.generator.buildPreview();
+};
+
+GeneratorDom.prototype.updatePreview = function() {
+    if(this.leftAlign) {
+        let preview = document.getElementById("leftPreview");
+        preview.innerHTML = this.generator.buildPreview("left");
+    } else {
+        let preview = document.getElementById("rightPreview");
+        preview.innerHTML = this.generator.buildPreview("right");
+    }
 };
 
 GeneratorDom.prototype.clear = function() {
     const output = document.getElementById("output");
-    const preview = document.getElementById("preview");
+    const leftPreview = document.getElementById("leftPreview");
+    const rightPreview = document.getElementById("rightPreview");
     output.value = "";
-    preview.value = "";
+    leftPreview.innerHTML = "";
+    rightPreview.innerHTML = "";
     this.generator.removeAllElements();
 };
 
+GeneratorDom.prototype.alignLeft = function(state) {
+    this.leftAlign = state;
+    if(this.leftAlign) {
+        document.getElementById("leftButton").setAttribute("style", "border: 4px inset black");
+        document.getElementById("rightButton").setAttribute("style", "");
+    } else {
+        document.getElementById("rightButton").setAttribute("style", "border: 4px inset black");
+        document.getElementById("leftButton").setAttribute("style", "");
+    }
+}
 
 const genDom = new GeneratorDom();
 document.getElementById("options").appendChild(genDom.init());
 document.getElementById("clearButton").addEventListener("click", function() {
     genDom.clear();
+});
+document.getElementById("leftButton").addEventListener("click", function() {
+    genDom.alignLeft(true);
+});
+document.getElementById("rightButton").addEventListener("click", function() {
+    genDom.alignLeft(false);
 });

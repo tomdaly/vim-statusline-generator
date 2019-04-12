@@ -1,64 +1,109 @@
+"use strict";
+
+let testElement = {
+    out: "%m",
+    preview: "[+]",
+};
+
 describe("testGenerator", function() {
 
-    beforeEach(function() {
-        testGenerator = new Generator();
-        testGenDom = new GeneratorDom();
-    });
+    let testGenerator;
 
     describe("Testing testGenerator", function() {
-        it("should be empty on initialise", function() {
-            expect(testGenerator.elements.length).toEqual(0);
+        beforeEach(function() {
+            testGenerator = new Generator();
         });
 
-        describe("when element is added", function() {
-            it("should increment elements length", function() {
-                expect(testGenerator.elements.length).toEqual(0);
-                testGenerator.addElement("t");
-                expect(testGenerator.elements.length).toEqual(1);
-            });
+        it("elements should be empty on initialise", function() {
+            expect(testGenerator.leftElements.length).toEqual(0);
+            expect(testGenerator.rightElements.length).toEqual(0);
         });
 
-        describe("when an element is removed", function() {
-            it("should decrement elements array length", function() {
-                testGenerator.elements.push("t");
-                expect(testGenerator.elements.length).toEqual(1);
-
-                testGenerator.removeElement();
-                expect(testGenerator.elements.length).toEqual(0);
-            });
-        });
-
-        it("should build statusline code", function() {
-            let element = {
-                out: "%m",
-                preview: "[+]",
-            };
-            testGenerator.elements.push(element);
-            let out = testGenerator.buildOutput();
-
-            expect(out).toEqual("statusline+=%m");
-        });
-
-        it("should build statusline preview", function() {
-            let element = {
-                out: "%m",
-                preview: "[+]",
-            };
-            testGenerator.elements.push(element);
-            let preview = testGenerator.buildPreview();
-
-            expect(preview).toEqual("[+]");
-        });
 
         it("should clear elements", function() {
-            testGenerator.elements.push("a");
-            expect(testGenerator.elements.length).toEqual(1);
+            testGenerator.leftElements.push("a");
+            testGenerator.rightElements.push("a");
+            expect(testGenerator.leftElements.length).toEqual(1);
+            expect(testGenerator.rightElements.length).toEqual(1);
             testGenerator.removeAllElements();
-            expect(testGenerator.elements.length).toEqual(0);
+            expect(testGenerator.leftElements.length).toEqual(0);
+            expect(testGenerator.rightElements.length).toEqual(0);
+        });
+
+        describe("if align is left", function() {
+            it("should add element to left", function() {
+                testGenerator.addElement(testElement, true);
+                expect(testGenerator.leftElements.length).toEqual(1);
+            });
+
+            it("should build statusline preview", function() {
+                testGenerator.leftElements.push(testElement);
+                let preview = testGenerator.buildPreview("left");
+
+                expect(preview).toEqual("[+]");
+            });
+
+            it("should build statusline code", function() {
+                testGenerator.leftElements.push(testElement);
+                let out = testGenerator.buildOutput();
+
+                expect(out).toEqual("statusline+=%m\n");
+            });
+        });
+
+        describe("if align is right", function() {
+            it("should add element to right", function() {
+                testGenerator.addElement(testElement, false);
+                expect(testGenerator.rightElements.length).toEqual(1);
+            });
+
+            it("should build statusline preview", function() {
+                testGenerator.rightElements.push(testElement);
+                let preview = testGenerator.buildPreview("right");
+
+                expect(preview).toEqual("[+]");
+            });
+
+            it("should build statusline code", function() {
+                testGenerator.rightElements.push(testElement);
+                let out = testGenerator.buildOutput();
+
+                expect(out).toEqual("statusline+=%=\nstatusline+=%m\n");
+            });
         });
     });
 
     describe("Testing webpage", function() {
+
+        let testGenDom, output, leftPreview, rightPreview, leftButton, rightButton;
+
+        beforeEach(function() {
+            output = document.createElement("input");
+            leftPreview = document.createElement("input");
+            rightPreview = document.createElement("input");
+            leftButton = document.createElement("button");
+            rightButton = document.createElement("button");
+            output.setAttribute("id", "output");
+            leftPreview.setAttribute("id", "leftPreview");
+            rightPreview.setAttribute("id", "rightPreview");
+            leftButton.setAttribute("id", "leftButton");
+            rightButton.setAttribute("id", "rightButton");
+            document.body.appendChild(output);
+            document.body.appendChild(leftPreview);
+            document.body.appendChild(rightPreview);
+            document.body.appendChild(leftButton);
+            document.body.appendChild(rightButton);
+            testGenDom = new GeneratorDom();
+        });
+
+        afterEach(function() {
+            document.body.removeChild(output);
+            document.body.removeChild(leftPreview);
+            document.body.removeChild(rightPreview);
+            document.body.removeChild(leftButton);
+            document.body.removeChild(rightButton);
+        });
+
         it("should initialise with buttons", function() {
             const form = document.createElement("form");
             let button;
@@ -70,38 +115,38 @@ describe("testGenerator", function() {
             expect(testGenDom.init().childNodes.length).not.toBeLessThan(0);
         });
 
-        it("should update output and preview text", function() {
-            const output = document.createElement("input");
-            const preview = document.createElement("input");
-            output.setAttribute("id", "output");
-            preview.setAttribute("id", "preview");
-            document.body.appendChild(output);
-            document.body.appendChild(preview);
-            testGenDom.generator.addElement(options[0]);
-            testGenDom.update();
+        it("should update output", function() {
+            testGenDom.generator.addElement(testElement, true);
+            testGenDom.updateOutput();
 
             expect(output.value).toEqual("statusline+=%m");
-            expect(preview.value).toEqual("[+]");
-            document.body.removeChild(output);
-            document.body.removeChild(preview);
+        });
+
+        it("should update preview text on left", function() {
+            testGenDom.generator.addElement(testElement, true);
+            testGenDom.alignLeft(true);
+            testGenDom.updatePreview();
+
+            expect(leftPreview.value).toEqual("[+]");
+        });
+
+        it("should update preview text on right", function() {
+            testGenDom.generator.addElement(testElement, false);
+            testGenDom.alignLeft(false);
+            testGenDom.updatePreview();
+
+            expect(rightPreview.value).toEqual("[+]");
         });
 
         it("should clear output and preview", function() {
-            const output = document.createElement("input");
-            const preview = document.createElement("input");
-            output.setAttribute("id", "output");
-            preview.setAttribute("id", "preview");
-            output.setAttribute("value", "foo");
-            preview.setAttribute("value", "bar");
-            document.body.appendChild(output);
-            document.body.appendChild(preview);
-
+            output.value = "fo";
+            leftPreview.value = "ob";
+            rightPreview.value = "ar";
             testGenDom.clear();
 
             expect(output.value).toEqual("");
-            expect(preview.value).toEqual("");
-            document.body.removeChild(output);
-            document.body.removeChild(preview);
+            expect(leftPreview.value).toEqual("");
+            expect(rightPreview.value).toEqual("");
         });
     });
 });

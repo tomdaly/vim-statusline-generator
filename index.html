@@ -16,13 +16,19 @@
       <h1 style="text-align:center;">Vim Statusline Generator</h1>
       <div class="jumbotron">
         <div class="panel panel-default" style="text-align:center;">
-          <div class="panel-body">
-            statusline preview:<br>
-            <input type="text" class="form-control" id="preview" value="" style="font-family:monospace;background-color:#fff" readonly>
+          statusline preview:<br>
+          <div class="panel-body" style="border: 1px solid black;">
+            <span id="leftPreview" style="float:left;"> </span><span id="rightPreview" style="float:right;"> </span>
+            <br>
           </div>
         </div>
         <hr>
-        <button id="clearButton" type="button" class="btn btn-outline-dark">Clear</button><br><br>
+        <div>
+          <button id="clearButton" type="button" class="btn btn-outline-danger">Clear</button>
+          <button id="leftButton" type="button" class="btn btn-secondary">Left Align</button>
+          <button id="rightButton" type="button" class="btn btn-secondary">Right Align</button>
+        </div>
+        <br>
         <div id="options"></div>
       </div>
       <div style="text-align: center;">
