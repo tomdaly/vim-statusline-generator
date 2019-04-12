@@ -4,62 +4,74 @@ let options = [
     {
         title: "Modified flag",
         out: "%m",
-        preview: "[+]"
+        preview: "[+]",
+        colour: "dark"
     },
     {
         title: "Help flag",
         out: "%h",
-        preview: "[Help]"
+        preview: "[Help]",
+        colour: "dark"
     },
     {
         title: "Read-only flag",
         out: "%r",
-        preview: "[RO]"
+        preview: "[RO]",
+        colour: "dark"
     },
     {
         title: "Short filename",
         out: "%f",
-        preview: "myscript.js"
+        preview: "myscript.js",
+        colour: "dark"
     },
     {
         title: "Long filename",
         out: "%F",
-        preview: "/home/tom/myscript.js"
+        preview: "/home/tom/myscript.js",
+        colour: "dark"
     },
     {
         title: "Current line number",
         out: "%l",
-        preview: "74"
+        preview: "74",
+        colour: "dark"
     },
     {
         title: "Total line number",
         out: "%L",
-        preview: "99"
+        preview: "99",
+        colour: "dark"
     },
     {
         title: "Percent of file",
         out: "%P",
-        preview: "75%"
+        preview: "75%",
+        colour: "dark"
     },
     {
         title: "File type",
         out: "%y",
-        preview: "[javascript]"
+        preview: "[javascript]",
+        colour: "dark"
     },
     {
         title: "File format",
         out: "%{&ff}",
-        preview: "dos"
+        preview: "dos",
+        colour: "dark"
     },
     {
         title: "File encoding",
         out: "%{strlen(&fenc)?&fenc:'none'}",
-        preview: "utf-8"
+        preview: "utf-8",
+        colour: "dark"
     },
     {
         title: "Git branch",
         out: "%{b:gitbranch}",
         preview: "(master)",
+        colour: "primary",
         extra: `
 function! StatuslineGitBranch()
   let b:gitbranch=""
@@ -76,12 +88,14 @@ endfunction
 augroup GetGitBranch
   autocmd!
   autocmd VimEnter,WinEnter,BufEnter * call StatuslineGitBranch()
-augroup END`
+augroup END
+`
     },
     {
         title: "Mode",
         out: "%{StatuslineMode()}",
         preview: "INSERT",
+        colour: "primary",
         extra: `
 function! StatuslineMode()
   let l:mode=mode()
@@ -95,7 +109,43 @@ function! StatuslineMode()
     return "REPLACE"
   endif
 endfunction
-        `
+`
+    },
+    {
+        title: "Current time",
+        out: "%{strftime(\"%H:%M\")}",
+        preview: "11:45",
+        colour: "primary"
+    },
+    {
+        title: "Space character",
+        out: " ",
+        preview: " ",
+        colour: "info"
+    },
+    {
+        title: "Pipe character",
+        out: "|",
+        preview: "|",
+        colour: "info"
+    },
+    {
+        title: "Colon character",
+        out: ":",
+        preview: ":",
+        colour: "info"
+    },
+    {
+        title: "Left chevron character",
+        out: "<",
+        preview: "<",
+        colour: "info"
+    },
+    {
+        title: "Right chevron character",
+        out: ">",
+        preview: ">",
+        colour: "info"
     },
 ];
 
@@ -172,7 +222,7 @@ GeneratorDom.prototype.init = function() {
     for (let i = 0; i < options.length; i++) {
         button = document.createElement("button");
         button.setAttribute("type", "button");
-        button.setAttribute("class", "btn btn-dark");
+        button.setAttribute("class", "btn btn-" + options[i].colour);
         button.innerHTML = options[i].title;
         button.addEventListener("click", function() {
             _this.generator.addElement(options[i], _this.leftAlign);

@@ -127,7 +127,7 @@ describe("testGenerator", function() {
             testGenDom.alignLeft(true);
             testGenDom.updatePreview();
 
-            expect(leftPreview.value).toEqual("[+]");
+            expect(leftPreview.innerHTML).toEqual("[+]");
         });
 
         it("should update preview text on right", function() {
@@ -135,7 +135,7 @@ describe("testGenerator", function() {
             testGenDom.alignLeft(false);
             testGenDom.updatePreview();
 
-            expect(rightPreview.value).toEqual("[+]");
+            expect(rightPreview.innerHTML).toEqual("[+]");
         });
 
         it("should clear output and preview", function() {
@@ -145,8 +145,8 @@ describe("testGenerator", function() {
             testGenDom.clear();
 
             expect(output.value).toEqual("");
-            expect(leftPreview.value).toEqual("");
-            expect(rightPreview.value).toEqual("");
+            expect(leftPreview.innerHTML).toEqual("");
+            expect(rightPreview.innerHTML).toEqual("");
         });
     });
 });
