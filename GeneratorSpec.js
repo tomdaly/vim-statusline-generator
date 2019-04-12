@@ -47,7 +47,7 @@ describe("testGenerator", function() {
                 testGenerator.leftElements.push(testElement);
                 let out = testGenerator.buildOutput();
 
-                expect(out).toEqual("statusline+=%m\n");
+                expect(out).toEqual("set laststatus=2\nset statusline+=%m\n");
             });
         });
 
@@ -68,7 +68,7 @@ describe("testGenerator", function() {
                 testGenerator.rightElements.push(testElement);
                 let out = testGenerator.buildOutput();
 
-                expect(out).toEqual("statusline+=%=\nstatusline+=%m\n");
+                expect(out).toEqual("set laststatus=2\nset statusline+=%=\nset statusline+=%m\n");
             });
         });
     });
@@ -119,7 +119,7 @@ describe("testGenerator", function() {
             testGenDom.generator.addElement(testElement, true);
             testGenDom.updateOutput();
 
-            expect(output.value).toEqual("statusline+=%m");
+            expect(output.value).toEqual("set laststatus=2set statusline+=%m");
         });
 
         it("should update preview text on left", function() {
