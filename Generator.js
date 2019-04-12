@@ -56,6 +56,47 @@ let options = [
         out: "%{strlen(&fenc)?&fenc:'none'}",
         preview: "utf-8"
     },
+    {
+        title: "Git branch",
+        out: "%{b:gitbranch}",
+        preview: "(master)",
+        extra: `
+function! StatuslineGitBranch()
+  let b:gitbranch=""
+  if &modifiable
+    lcd %:p:h
+    let l:gitrevparse=system("git rev-parse --abbrev-ref HEAD")
+    lcd -
+    if l:gitrevparse!~"fatal: not a git repository"
+      let b:gitbranch="(".substitute(l:gitrevparse, '\n', '', 'g').") "
+    endif
+  endif
+endfunction
+    
+augroup GetGitBranch
+  autocmd!
+  autocmd VimEnter,WinEnter,BufEnter * call StatuslineGitBranch()
+augroup END`
+    },
+    {
+        title: "Mode",
+        out: "%{StatuslineMode()}",
+        preview: "INSERT",
+        extra: `
+function! StatuslineMode()
+  let l:mode=mode()
+  if l:mode==#"n"
+    return "NORMAL"
+  elseif l:mode==?"v"
+    return "VISUAL"
+  elseif l:mode==#"i"
+    return "INSERT"
+  elseif l:mode==#"R"
+    return "REPLACE"
+  endif
+endfunction
+        `
+    },
 ];
 
 function Generator() {
@@ -82,9 +123,13 @@ Generator.prototype.removeAllElements = function() {
 
 Generator.prototype.buildOutput = function() {
     let output = "";
+    let extra = "";
     for (let i = 0; i < this.leftElements.length; i++) {
         let curr = this.leftElements[i];
         output += "statusline+=" + curr.out + "\n";
+        if (curr.extra != null) {
+            extra += curr.extra;
+        }
     }
     if (this.rightElements.length) {
         output += "statusline+=%=\n";
@@ -92,8 +137,11 @@ Generator.prototype.buildOutput = function() {
     for (let i = 0; i < this.rightElements.length; i++) {
         let curr = this.rightElements[i];
         output += "statusline+=" + curr.out + "\n";
+        if (curr.extra != null) {
+            extra += curr.extra;
+        }
     }
-    return output;
+    return output + extra;
 };
 
 Generator.prototype.buildPreview = function(align) {
