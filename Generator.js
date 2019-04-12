@@ -78,12 +78,9 @@ Generator.prototype.removeAllElements = function() {
 
 Generator.prototype.buildOutput = function() {
     let output = "";
-    if (this.elements.length) {
-        output = "statusline+=";
-    }
     for (let i = 0; i < this.elements.length; i++) {
         let curr = this.elements[i];
-        output += curr.out;
+        output += "statusline+=" + curr.out + "\n";
     }
     return output;
 };
@@ -122,15 +119,15 @@ GeneratorDom.prototype.init = function() {
 GeneratorDom.prototype.update = function() {
     const output = document.getElementById("output");
     const preview = document.getElementById("preview");
-    output.setAttribute("value", this.generator.buildOutput());
-    preview.setAttribute("value", this.generator.buildPreview());
+    output.value = this.generator.buildOutput();
+    preview.value = this.generator.buildPreview();
 };
 
 GeneratorDom.prototype.clear = function() {
     const output = document.getElementById("output");
     const preview = document.getElementById("preview");
-    output.setAttribute("value", "");
-    preview.setAttribute("value", "");
+    output.value = "";
+    preview.value = "";
     this.generator.removeAllElements();
 };
 

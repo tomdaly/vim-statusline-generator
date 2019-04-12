@@ -17,16 +17,17 @@
       <div class="jumbotron">
         <div class="panel panel-default" style="text-align:center;">
           <div class="panel-body">
-            .vimrc code:
-            <input type="text" size="80" id="output" value="" style="font-family:monospace;" readonly>
-            <br>
-            statusline view:
-            <input type="text" size="80" id="preview" value="" style="font-family:monospace;" readonly>
+            statusline preview:<br>
+            <input type="text" class="form-control" id="preview" value="" style="font-family:monospace;background-color:#fff" readonly>
           </div>
         </div>
         <hr>
         <button id="clearButton" type="button" class="btn btn-outline-dark">Clear</button><br><br>
         <div id="options"></div>
+      </div>
+      <div style="text-align: center;">
+        .vimrc code:<br>
+        <textarea type="text" id="output" cols="80" rows="10" value="" style="font-family:monospace;resize:none;" readonly></textarea>
       </div>
     </div>
 
