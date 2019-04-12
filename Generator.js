@@ -6,6 +6,56 @@ let options = [
         out: "%m",
         preview: "[+]"
     },
+    {
+        title: "Help flag",
+        out: "%h",
+        preview: "[Help]"
+    },
+    {
+        title: "Read-only flag",
+        out: "%r",
+        preview: "[RO]"
+    },
+    {
+        title: "Short filename",
+        out: "%f",
+        preview: "myscript.js"
+    },
+    {
+        title: "Long filename",
+        out: "%F",
+        preview: "/home/tom/myscript.js"
+    },
+    {
+        title: "Current line number",
+        out: "%l",
+        preview: "74"
+    },
+    {
+        title: "Total line number",
+        out: "%L",
+        preview: "99"
+    },
+    {
+        title: "Percent of file",
+        out: "%P",
+        preview: "75%"
+    },
+    {
+        title: "File type",
+        out: "%y",
+        preview: "[javascript]"
+    },
+    {
+        title: "File format",
+        out: "%{&ff}",
+        preview: "dos"
+    },
+    {
+        title: "File encoding",
+        out: "%{strlen(&fenc)?&fenc:'none'}",
+        preview: "utf-8"
+    },
 ];
 
 function Generator() {
