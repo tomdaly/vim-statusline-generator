@@ -172,21 +172,21 @@ Generator.prototype.removeAllElements = function() {
 };
 
 Generator.prototype.buildOutput = function() {
-    let output = "";
+    let output = "set laststatus=2\n";
     let extra = "";
     for (let i = 0; i < this.leftElements.length; i++) {
         let curr = this.leftElements[i];
-        output += "statusline+=" + curr.out + "\n";
+        output += "set statusline+=" + curr.out + "\n";
         if (curr.extra != null) {
             extra += curr.extra;
         }
     }
     if (this.rightElements.length) {
-        output += "statusline+=%=\n";
+        output += "set statusline+=%=\n";
     }
     for (let i = 0; i < this.rightElements.length; i++) {
         let curr = this.rightElements[i];
-        output += "statusline+=" + curr.out + "\n";
+        output += "set statusline+=" + curr.out + "\n";
         if (curr.extra != null) {
             extra += curr.extra;
         }
