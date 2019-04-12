@@ -10,7 +10,8 @@ A vanilla vim statusline generator; the easiest way to create a custom statuslin
 
 ## Features/Todo
 
-- [x] Disply flags
+- [x] Vim flags
+- [x] File info
 - [x] Display git branch
 - [x] Display mode and time
 - [x] Change foreground colour
