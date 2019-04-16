@@ -136,6 +136,12 @@ endfunction
         buttonColour: "info"
     },
     {
+        title: "Slash character",
+        out: "/",
+        preview: "/",
+        buttonColour: "info"
+    },
+    {
         title: "Left chevron character",
         out: "<",
         preview: "<",
