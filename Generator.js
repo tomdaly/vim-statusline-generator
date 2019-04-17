@@ -131,6 +131,14 @@ function! StatuslineMode()
     return "INSERT"
   elseif l:mode==#"R"
     return "REPLACE"
+  elseif l:mode==?"s"
+    return "SELECT"
+  elseif l:mode==#"t"
+    return "TERMINAL"
+  elseif l:mode==#"c"
+    return "COMMAND"
+  elseif l:mode==#"!"
+    return "SHELL"
   endif
 endfunction
 `
