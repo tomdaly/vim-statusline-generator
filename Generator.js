@@ -155,7 +155,7 @@ endfunction
   },
   {
     title: 'Space character',
-    out: ' ',
+    out: '\\ ',
     preview: ' ',
     buttonColour: 'info'
   },
@@ -190,34 +190,37 @@ endfunction
     buttonColour: 'info'
   },
   {
-    title: '<font color="red">Red foreground</font>',
-    out: '%1*\\',
-    preview: '<font color="red">',
-    buttonColour: 'light',
-    extra: 'hi User1 ctermbg=black ctermfg=red guibg=black guifg=red\n'
-  },
-  {
-    title: '<font color="blue">Blue foreground</font>',
-    out: '%2*\\',
-    preview: '<font color="blue">',
-    buttonColour: 'light',
-    extra: 'hi User2 ctermbg=black ctermfg=blue guibg=black guifg=blue\n'
-  },
-  {
-    title: '<font color="green">Green foreground</font>',
-    out: '%3*\\',
-    preview: '<font color="green">',
-    buttonColour: 'light',
-    extra: 'hi User3 ctermbg=black ctermfg=green guibg=black guifg=green\n'
-  },
-  {
-    title: '<font color="black">Reset foreground</font>',
+    title: 'Reset colour',
     out: '%9*\\',
-    preview: '<font color="black">',
+    preview: '<span style="color:white;background-color:black;">',
     buttonColour: 'light',
-    extra: 'hi User9 NONE\n'
+    extra: 'hi User9 ctermbg=black ctermfg=white guibg=black guifg=white\n'
   }
 ]
+
+let colours = ['black',
+  'darkred',
+  'darkgreen',
+  'brown',
+  'darkblue',
+  'darkmagenta',
+  'darkcyan',
+  'lightgray',
+  'darkgray',
+  'red',
+  'green',
+  'yellow',
+  'blue',
+  'magenta',
+  'cyan',
+  'white',
+  'grey',
+  'lightred',
+  'lightgreen',
+  'lightyellow',
+  'lightblue',
+  'lightmagenta',
+  'lightcyan']
 
 /* -- */
 
@@ -235,11 +238,11 @@ Generator.prototype.addElement = function (element, align) {
 }
 
 Generator.prototype.removeElement = function (align) {
-    if (align === LEFT_ALIGN) {
-        this.leftElements.pop()
-    } else {
-        this.rightElements.pop()
-    }
+  if (align === LEFT_ALIGN) {
+    return this.leftElements.pop()
+  } else {
+    return this.rightElements.pop()
+  }
 }
 
 Generator.prototype.removeAllElements = function () {
@@ -254,10 +257,15 @@ Generator.prototype.removeAllElements = function () {
 Generator.prototype.buildOutput = function () {
   let output = 'set laststatus=2\n'
   let extra = ''
+  let colours = ''
   for (let i = 0; i < this.leftElements.length; i++) {
     let curr = this.leftElements[i]
     output += 'set statusline+=' + curr.out + '\n'
-    if (curr.extra != null) {
+    let isColourElement = curr.title.startsWith('btnColour') || curr.title === 'Reset colour'
+    if (isColourElement && !colours.includes(curr.extra)) {
+      colours += curr.extra
+    }
+    if (!isColourElement && curr.extra != null) {
       extra += curr.extra
     }
   }
@@ -267,11 +275,15 @@ Generator.prototype.buildOutput = function () {
   for (let i = 0; i < this.rightElements.length; i++) {
     let curr = this.rightElements[i]
     output += 'set statusline+=' + curr.out + '\n'
-    if (curr.extra != null) {
+    let isColourElement = curr.title.startsWith('btnColour') || curr.title === 'Reset colour'
+    if (isColourElement && !colours.includes(curr.extra)) {
+      colours += curr.extra
+    }
+    if (!isColourElement && curr.extra != null) {
       extra += curr.extra
     }
   }
-  return output + extra
+  return output + colours + extra
 }
 
 Generator.prototype.buildPreview = function (align) {
@@ -292,9 +304,11 @@ Generator.prototype.buildPreview = function (align) {
 function GeneratorDom () {
   this.generator = new Generator()
   this.setAlign(LEFT_ALIGN)
+  this.numColours = 0
+  this.colourButtons = []
 };
 
-GeneratorDom.prototype.init = function () {
+GeneratorDom.prototype.initButtons = function () {
   const form = document.createElement('form')
   let button
   let _this = this
@@ -304,7 +318,7 @@ GeneratorDom.prototype.init = function () {
     button.setAttribute('class', 'btn btn-' + options[i].buttonColour)
     button.innerHTML = options[i].title
     button.addEventListener('click', function () {
-      _this.generator.addElement(options[i], _this.align)
+      _this.addElement(options[i])
       _this.update()
     }, false)
     form.appendChild(button)
@@ -312,7 +326,47 @@ GeneratorDom.prototype.init = function () {
   return form
 }
 
-GeneratorDom.prototype.addElement = function(element) {
+GeneratorDom.prototype.initDropdowns = function () {
+  const form = document.createElement('form')
+  const fgcolours = document.createElement('select')
+  const bgcolours = document.createElement('select')
+  fgcolours.setAttribute('id', 'fgcolours')
+  bgcolours.setAttribute('id', 'bgcolours')
+  let colourOption
+  for (let i = 0; i < colours.length; i++) {
+    colourOption = document.createElement('option')
+    colourOption.textContent = colours[i]
+    colourOption.value = colours[i]
+    fgcolours.appendChild(colourOption)
+  }
+  for (let i = 0; i < colours.length; i++) {
+    colourOption = document.createElement('option')
+    colourOption.textContent = colours[i]
+    colourOption.value = colours[i]
+    bgcolours.appendChild(colourOption)
+  }
+  let addColourButton = document.createElement('button')
+  addColourButton = document.createElement('button')
+  addColourButton.setAttribute('type', 'button')
+  addColourButton.setAttribute('class', 'btn btn-light')
+  addColourButton.innerHTML = 'Add colour'
+  let _this = this
+  addColourButton.addEventListener('click', function () {
+    let fg = document.getElementById('fgcolours').value
+    let bg = document.getElementById('bgcolours').value
+    _this.addColour(fg, bg)
+    _this.update()
+  }, false)
+  form.innerHTML += '<br>Foreground colour:<br>'
+  form.appendChild(fgcolours)
+  form.innerHTML += '<br>Background colour:<br>'
+  form.appendChild(bgcolours)
+  form.innerHTML += '<br><br>'
+  form.appendChild(addColourButton)
+  return form
+}
+
+GeneratorDom.prototype.addElement = function (element) {
   this.generator.addElement(element, this.align)
 }
 
@@ -344,13 +398,24 @@ GeneratorDom.prototype.clear = function () {
   leftPreview.innerHTML = ''
   rightPreview.innerHTML = ''
   this.generator.removeAllElements()
+  const options = document.getElementById('options')
+  for (let i = 0; i < this.colourButtons.length; i++) {
+    options.removeChild(this.colourButtons[i])
+  }
+  this.colourButtons = []
 }
 
 GeneratorDom.prototype.undo = function () {
-  if(this.align === LEFT_ALIGN) {
-    this.generator.removeElement(LEFT_ALIGN)
+  let removed
+  if (this.align === LEFT_ALIGN) {
+    removed = this.generator.removeElement(LEFT_ALIGN)
   } else {
-    this.generator.removeElement(RIGHT_ALIGN)
+    removed = this.generator.removeElement(RIGHT_ALIGN)
+  }
+  if (removed != null && removed.title.startsWith('btnColour')) {
+    let button = document.getElementById(removed.title)
+    document.getElementById('options').removeChild(button)
+    this.colourButtons.pop()
   }
   this.update()
 }
@@ -363,5 +428,35 @@ GeneratorDom.prototype.setAlign = function (align) {
   } else {
     document.getElementById('rightButton').setAttribute('style', 'border: 4px inset black')
     document.getElementById('leftButton').setAttribute('style', '')
+  }
+}
+
+GeneratorDom.prototype.addColour = function (foreground, background) {
+  let numColours = this.colourButtons.length
+  if (numColours < 8) {
+    numColours++
+    const form = document.getElementById('options')
+    let colourButton = document.createElement('button')
+    colourButton.setAttribute('type', 'button')
+    colourButton.setAttribute('id', 'btnColour' + numColours)
+    colourButton.setAttribute('class', 'btn btn-light')
+    colourButton.setAttribute('style', 'color:' + foreground + ';background-color:' + background + ';')
+    colourButton.innerHTML = 'Colour ' + numColours
+    let colourElement = {
+      title: 'btnColour' + numColours,
+      out: '%' + numColours + '*\\',
+      preview: '<span style="color:' + foreground + ';background-color:' + background + ';">',
+      extra: 'hi User' + numColours + ' ctermbg=' + background + ' ctermfg=' + foreground + ' guibg=' + background + ' guifg=' + foreground + '\n'
+    }
+    let _this = this
+    colourButton.addEventListener('click', function () {
+      _this.addElement(colourElement)
+      _this.update()
+    }, false)
+    form.appendChild(colourButton)
+    this.colourButtons.push(colourButton)
+    return colourElement
+  } else {
+    alert('Vim only allows for 8 colours! Please remove a colour by undoing')
   }
 }

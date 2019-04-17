@@ -16,7 +16,7 @@ A vanilla vim statusline generator; the easiest way to create a custom statuslin
 - [x] Display mode and time
 - [x] Change foreground colour
 - [x] Separators
-- [ ] Custom colours
+- [x] Custom colours
 - [ ] Custom separators
 
 ## Built with

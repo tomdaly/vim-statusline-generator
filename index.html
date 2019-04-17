@@ -19,28 +19,32 @@
       <div class="jumbotron">
         <div class="panel panel-default" style="text-align:center;">
           statusline preview:<br>
-          <div class="panel-body" style="border: 1px solid black;">
+          <div class="panel-body" style="color: white; background-color:black;">
             <span id="leftPreview" style="float:left;"> </span><span id="rightPreview" style="float:right;"> </span>
             <br>
           </div>
         </div>
         <hr>
-        <span style="float: left; display: inline-block;">
-          <button id="leftButton" type="button" class="btn btn-secondary">Left Align</button>
-          <button id="rightButton" type="button" class="btn btn-secondary">Right Align</button>
-          <button id="defaultButton" type="button" class="btn btn-outline-dark">Powerline-style Statusline</button>
-        </span>
-        <span style="float: right; display: inline-block;">
-          <button id="undoButton" type="button" class="btn btn-outline-danger">Undo</button>
-          <button id="clearButton" type="button" class="btn btn-danger">Clear</button>
-        </span>
+        <div>
+          <span style="float: left; display: inline-block;">
+            <button id="leftButton" type="button" class="btn btn-secondary">Left Align</button>
+            <button id="rightButton" type="button" class="btn btn-secondary">Right Align</button>
+            <button id="defaultButton" type="button" class="btn btn-outline-dark">Powerline-style Statusline</button>
+          </span>
+          <span style="float: right; display: inline-block;">
+            <button id="undoButton" type="button" class="btn btn-outline-danger">Undo</button>
+            <button id="clearButton" type="button" class="btn btn-danger">Clear</button>
+          </span>
+        </div>
         <br><br><br>
         <div id="options"></div>
+        <div id="dropdowns" style="text-align: center;"></div>
       </div>
       <div style="text-align: center;">
         .vimrc code:<br>
         <textarea type="text" id="output" cols="80" rows="10" value="" style="font-family:monospace;resize:none;" readonly></textarea>
       </div>
+      <p style="text-align: center;">To see what colours your environment can use, run this command in vim <span style="font-family:monospace;">:run syntax/colortest.vim</span></p>
     </div>
 
     <br>
