@@ -44,6 +44,12 @@ let options = [
     buttonColour: 'dark'
   },
   {
+    title: 'Current column number',
+    out: '%c',
+    preview: '74',
+    buttonColour: 'dark'
+  },
+  {
     title: 'Percent of file',
     out: '%P',
     preview: '75%',
@@ -65,6 +71,24 @@ let options = [
     title: 'File encoding',
     out: "%{strlen(&fenc)?&fenc:'none'}",
     preview: 'utf-8',
+    buttonColour: 'dark'
+  },
+  {
+    title: 'Keymap name',
+    out: '%k',
+    preview: '&lt;gb&gt;',
+    buttonColour: 'dark'
+  },
+  {
+    title: 'Buffer number',
+    out: '%n',
+    preview: '2',
+    buttonColour: 'dark'
+  },
+  {
+    title: 'Window number',
+    out: '%{winnr()}',
+    preview: '1',
     buttonColour: 'dark'
   },
   {
@@ -113,7 +137,7 @@ endfunction
   },
   {
     title: 'Current time',
-    out: '%{strftime("%H:%M")}',
+    out: '%{strftime(\\"%H:%M\\")}',
     preview: '11:45',
     buttonColour: 'primary'
   },
@@ -144,13 +168,13 @@ endfunction
   {
     title: 'Left chevron character',
     out: '<',
-    preview: '<',
+    preview: '&lt;',
     buttonColour: 'info'
   },
   {
     title: 'Right chevron character',
     out: '>',
-    preview: '>',
+    preview: '&gt;',
     buttonColour: 'info'
   },
   {
