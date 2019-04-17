@@ -1,5 +1,5 @@
 # Vim Statusline Generator
-[![Build Status](https://travis-ci.org/tomdaly/vim-statusline-generator.svg?branch=develop)](https://travis-ci.org/tomdaly/vim-statusline-generator)
+[![Build Status](https://travis-ci.org/tomdaly/vim-statusline-generator.svg?branch=release-1.1)](https://travis-ci.org/tomdaly/vim-statusline-generator)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/standard/standard)
 
 A vanilla vim statusline generator; the easiest way to create a custom statusline for your vim environment.
