@@ -30,13 +30,13 @@ describe('testGenerator', function () {
 
     describe('if align is left', function () {
       it('should add element to left', function () {
-        testGenerator.addElement(testElement, true)
+        testGenerator.addElement(testElement, LEFT_ALIGN)
         expect(testGenerator.leftElements.length).toEqual(1)
       })
 
       it('should build statusline preview', function () {
         testGenerator.leftElements.push(testElement)
-        let preview = testGenerator.buildPreview('left')
+        let preview = testGenerator.buildPreview(LEFT_ALIGN)
 
         expect(preview).toEqual('[+]')
       })
@@ -47,17 +47,25 @@ describe('testGenerator', function () {
 
         expect(out).toEqual('set laststatus=2\nset statusline+=%m\n')
       })
+
+      it('should remove last left element', function() {
+          testGenerator.leftElements.push(testElement)
+          expect(testGenerator.leftElements.length).toEqual(1)
+
+          testGenerator.removeElement(LEFT_ALIGN)
+          expect(testGenerator.leftElements.length).toEqual(0)
+      })
     })
 
     describe('if align is right', function () {
       it('should add element to right', function () {
-        testGenerator.addElement(testElement, false)
+        testGenerator.addElement(testElement, RIGHT_ALIGN)
         expect(testGenerator.rightElements.length).toEqual(1)
       })
 
       it('should build statusline preview', function () {
         testGenerator.rightElements.push(testElement)
-        let preview = testGenerator.buildPreview('right')
+        let preview = testGenerator.buildPreview(RIGHT_ALIGN)
 
         expect(preview).toEqual('[+]')
       })
@@ -112,26 +120,36 @@ describe('testGenerator', function () {
       expect(testGenDom.init().childNodes.length).not.toBeLessThan(0)
     })
 
+    it('should add element to left', function() {
+      testGenDom.setAlign(LEFT_ALIGN)
+      testGenDom.addElement(testElement)
+      expect(testGenDom.generator.leftElements.length).toEqual(1)
+    })
+
+    it('should add element to right', function() {
+      testGenDom.setAlign(RIGHT_ALIGN)
+      testGenDom.addElement(testElement)
+      expect(testGenDom.generator.rightElements.length).toEqual(1)
+    })
+
     it('should update output', function () {
-      testGenDom.generator.addElement(testElement, true)
+      testGenDom.generator.addElement(testElement, LEFT_ALIGN)
       testGenDom.updateOutput()
 
       expect(output.value).toEqual('set laststatus=2set statusline+=%m')
     })
 
     it('should update preview text on left', function () {
-      testGenDom.generator.addElement(testElement, true)
-      testGenDom.alignLeft(true)
+      testGenDom.generator.addElement(testElement, LEFT_ALIGN)
       testGenDom.updatePreview()
 
       expect(leftPreview.innerHTML).toEqual('[+]')
     })
 
     it('should update preview text on right', function () {
-      testGenDom.generator.addElement(testElement, false)
-      testGenDom.alignLeft(false)
+      testGenDom.setAlign(RIGHT_ALIGN)
+      testGenDom.generator.addElement(testElement, RIGHT_ALIGN)
       testGenDom.updatePreview()
-
       expect(rightPreview.innerHTML).toEqual('[+]')
     })
 
@@ -144,6 +162,16 @@ describe('testGenerator', function () {
       expect(output.value).toEqual('')
       expect(leftPreview.innerHTML).toEqual('')
       expect(rightPreview.innerHTML).toEqual('')
+    })
+
+    it('should undo last added element', function() {
+      testGenDom.generator.addElement(testElement, LEFT_ALIGN)
+      testGenDom.generator.addElement(testElement, LEFT_ALIGN)
+      expect(testGenDom.generator.leftElements.length).toEqual(2)
+
+      testGenDom.undo()
+
+      expect(testGenDom.generator.leftElements.length).toEqual(1)
     })
   })
 })

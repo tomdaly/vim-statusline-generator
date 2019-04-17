@@ -1,5 +1,9 @@
 'use strict'
 
+/* global */
+const LEFT_ALIGN = true
+const RIGHT_ALIGN = false
+
 let options = [
   {
     title: 'Modified flag',
@@ -69,7 +73,7 @@ let options = [
   },
   {
     title: 'File encoding',
-    out: "%{strlen(&fenc)?&fenc:'none'}",
+    out: '%{strlen(&fenc)?&fenc:\'none\'}',
     preview: 'utf-8',
     buttonColour: 'dark'
   },
@@ -215,17 +219,27 @@ endfunction
   }
 ]
 
+/* -- */
+
 function Generator () {
   this.leftElements = []
   this.rightElements = []
 };
 
-Generator.prototype.addElement = function (element, isLeftAlign) {
-  if (isLeftAlign) {
+Generator.prototype.addElement = function (element, align) {
+  if (align === LEFT_ALIGN) {
     this.leftElements.push(element)
   } else {
     this.rightElements.push(element)
   }
+}
+
+Generator.prototype.removeElement = function (align) {
+    if (align === LEFT_ALIGN) {
+        this.leftElements.pop()
+    } else {
+        this.rightElements.pop()
+    }
 }
 
 Generator.prototype.removeAllElements = function () {
@@ -263,7 +277,7 @@ Generator.prototype.buildOutput = function () {
 Generator.prototype.buildPreview = function (align) {
   let preview = ''
   let elements
-  if (align === 'left') {
+  if (align === LEFT_ALIGN) {
     elements = this.leftElements
   } else {
     elements = this.rightElements
@@ -277,8 +291,7 @@ Generator.prototype.buildPreview = function (align) {
 
 function GeneratorDom () {
   this.generator = new Generator()
-  this.leftAlign = true
-  this.alignLeft(true)
+  this.setAlign(LEFT_ALIGN)
 };
 
 GeneratorDom.prototype.init = function () {
@@ -291,12 +304,16 @@ GeneratorDom.prototype.init = function () {
     button.setAttribute('class', 'btn btn-' + options[i].buttonColour)
     button.innerHTML = options[i].title
     button.addEventListener('click', function () {
-      _this.generator.addElement(options[i], _this.leftAlign)
+      _this.generator.addElement(options[i], _this.align)
       _this.update()
     }, false)
     form.appendChild(button)
   }
   return form
+}
+
+GeneratorDom.prototype.addElement = function(element) {
+  this.generator.addElement(element, this.align)
 }
 
 GeneratorDom.prototype.update = function () {
@@ -310,12 +327,12 @@ GeneratorDom.prototype.updateOutput = function () {
 }
 
 GeneratorDom.prototype.updatePreview = function () {
-  if (this.leftAlign) {
+  if (this.align === LEFT_ALIGN) {
     let preview = document.getElementById('leftPreview')
-    preview.innerHTML = this.generator.buildPreview('left')
+    preview.innerHTML = this.generator.buildPreview(LEFT_ALIGN)
   } else {
     let preview = document.getElementById('rightPreview')
-    preview.innerHTML = this.generator.buildPreview('right')
+    preview.innerHTML = this.generator.buildPreview(RIGHT_ALIGN)
   }
 }
 
@@ -329,9 +346,18 @@ GeneratorDom.prototype.clear = function () {
   this.generator.removeAllElements()
 }
 
-GeneratorDom.prototype.alignLeft = function (state) {
-  this.leftAlign = state
-  if (this.leftAlign) {
+GeneratorDom.prototype.undo = function () {
+  if(this.align === LEFT_ALIGN) {
+    this.generator.removeElement(LEFT_ALIGN)
+  } else {
+    this.generator.removeElement(RIGHT_ALIGN)
+  }
+  this.update()
+}
+
+GeneratorDom.prototype.setAlign = function (align) {
+  this.align = align
+  if (this.align === LEFT_ALIGN) {
     document.getElementById('leftButton').setAttribute('style', 'border: 4px inset black')
     document.getElementById('rightButton').setAttribute('style', '')
   } else {
