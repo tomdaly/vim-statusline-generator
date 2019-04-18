@@ -191,7 +191,7 @@ endfunction
   },
   {
     title: 'Reset colour',
-    out: '%9*\\',
+    out: '%9*',
     preview: '<span style="color:white;background-color:black;">',
     buttonColour: 'light',
     extra: 'hi User9 ctermbg=black ctermfg=white guibg=black guifg=white\n'
@@ -255,7 +255,7 @@ Generator.prototype.removeAllElements = function () {
 }
 
 Generator.prototype.buildOutput = function () {
-  let output = 'set laststatus=2\n'
+  let output = 'set laststatus=2\nset statusline=\n'
   let extra = ''
   let colours = ''
   for (let i = 0; i < this.leftElements.length; i++) {
@@ -444,7 +444,7 @@ GeneratorDom.prototype.addColour = function (foreground, background) {
     colourButton.innerHTML = 'Colour ' + numColours
     let colourElement = {
       title: 'btnColour' + numColours,
-      out: '%' + numColours + '*\\',
+      out: '%' + numColours + '*',
       preview: '<span style="color:' + foreground + ';background-color:' + background + ';">',
       extra: 'hi User' + numColours + ' ctermbg=' + background + ' ctermfg=' + foreground + ' guibg=' + background + ' guifg=' + foreground + '\n'
     }
