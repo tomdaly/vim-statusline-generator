@@ -46,7 +46,7 @@ describe('testGenerator', function () {
         testGenerator.leftElements.push(testElement)
         let out = testGenerator.buildOutput()
 
-        expect(out).toEqual('set laststatus=2\nset statusline+=%m\n')
+        expect(out).toEqual('set laststatus=2\nset statusline=\nset statusline+=%m\n')
       })
 
       it('should remove last left element', function () {
@@ -75,7 +75,7 @@ describe('testGenerator', function () {
         testGenerator.rightElements.push(testElement)
         let out = testGenerator.buildOutput()
 
-        expect(out).toEqual('set laststatus=2\nset statusline+=%=\nset statusline+=%m\n')
+        expect(out).toEqual('set laststatus=2\nset statusline=\nset statusline+=%=\nset statusline+=%m\n')
       })
     })
   })
@@ -142,7 +142,7 @@ describe('testGenerator', function () {
       testGenDom.generator.addElement(testElement, LEFT_ALIGN)
       testGenDom.updateOutput()
 
-      expect(output.value).toEqual('set laststatus=2set statusline+=%m')
+      expect(output.value).toEqual('set laststatus=2set statusline=set statusline+=%m')
     })
 
     it('should update preview text on left', function () {
