@@ -1,8 +1,8 @@
 'use strict'
 
 /* global */
-const LEFT_ALIGN = true
-const RIGHT_ALIGN = false
+const LEFT_ALIGN = 'L'
+const RIGHT_ALIGN = 'R'
 
 let options = [
   {
@@ -112,7 +112,7 @@ function! StatuslineGitBranch()
     endif
   endif
 endfunction
-    
+
 augroup GetGitBranch
   autocmd!
   autocmd VimEnter,WinEnter,BufEnter * call StatuslineGitBranch()
@@ -225,32 +225,44 @@ let colours = ['black',
 /* -- */
 
 function Generator () {
-  this.leftElements = []
-  this.rightElements = []
+  this.elements = []
 };
 
-Generator.prototype.addElement = function (element, align) {
-  if (align === LEFT_ALIGN) {
-    this.leftElements.push(element)
-  } else {
-    this.rightElements.push(element)
-  }
+Generator.prototype.addElement = function (element) {
+  this.elements.push(element)
 }
 
 Generator.prototype.removeElement = function (align) {
-  if (align === LEFT_ALIGN) {
-    return this.leftElements.pop()
-  } else {
-    return this.rightElements.pop()
-  }
+  return this.elements.pop()
 }
 
 Generator.prototype.removeAllElements = function () {
-  while (this.leftElements.length) {
-    this.leftElements.pop()
+  while (this.elements.length) {
+    this.elements.pop()
   }
-  while (this.rightElements.length) {
-    this.rightElements.pop()
+}
+
+Generator.prototype.buildOutputElementString = function (elements) {
+  let output = ''
+  let extra = ''
+  let colours = ''
+
+  for (let i = 0; i < elements.length; i++) {
+    let curr = elements[i]
+    output += 'set statusline+=' + curr.out + '\n'
+    let isColourElement = curr.title.startsWith('btnColour') || curr.title === 'Reset colour'
+    if (isColourElement && !colours.includes(curr.extra)) {
+      colours += curr.extra
+    }
+    if (!isColourElement && curr.extra != null) {
+      extra += curr.extra
+    }
+  }
+
+  return {
+    output: output,
+    extra: extra,
+    colours: colours
   }
 }
 
@@ -258,48 +270,70 @@ Generator.prototype.buildOutput = function () {
   let output = 'set laststatus=2\nset statusline=\n'
   let extra = ''
   let colours = ''
-  for (let i = 0; i < this.leftElements.length; i++) {
-    let curr = this.leftElements[i]
-    output += 'set statusline+=' + curr.out + '\n'
-    let isColourElement = curr.title.startsWith('btnColour') || curr.title === 'Reset colour'
-    if (isColourElement && !colours.includes(curr.extra)) {
-      colours += curr.extra
-    }
-    if (!isColourElement && curr.extra != null) {
-      extra += curr.extra
-    }
-  }
-  if (this.rightElements.length) {
+
+  let leftElements = this.splitElements().left
+  let rightElements = this.splitElements().right
+
+  let leftElementsString = this.buildOutputElementString(leftElements)
+  let rightElementsString = this.buildOutputElementString(rightElements)
+  output += leftElementsString.output
+  extra += leftElementsString.extra
+  colours += leftElementsString.colours
+
+  if (rightElements.length) {
     output += 'set statusline+=%=\n'
+    output += rightElementsString.output
+    extra += rightElementsString.extra
+    colours += rightElementsString.colours
   }
-  for (let i = 0; i < this.rightElements.length; i++) {
-    let curr = this.rightElements[i]
-    output += 'set statusline+=' + curr.out + '\n'
-    let isColourElement = curr.title.startsWith('btnColour') || curr.title === 'Reset colour'
-    if (isColourElement && !colours.includes(curr.extra)) {
-      colours += curr.extra
-    }
-    if (!isColourElement && curr.extra != null) {
-      extra += curr.extra
-    }
-  }
+
   return output + colours + extra
 }
 
 Generator.prototype.buildPreview = function (align) {
   let preview = ''
-  let elements
-  if (align === LEFT_ALIGN) {
-    elements = this.leftElements
-  } else {
-    elements = this.rightElements
-  }
+  let elements = this.splitElements(align)
+
   for (let i = 0; i < elements.length; i++) {
     let curr = elements[i]
     preview += curr.preview
   }
   return preview
 }
+
+Generator.prototype.splitElements = function(align) {
+  let leftElements = []
+  let rightElements = []
+
+  let alignNext = LEFT_ALIGN
+
+  for (let i = 0; i < this.elements.length; i++) {
+    let curr = this.elements[i]
+    if (curr === LEFT_ALIGN) {
+      alignNext = LEFT_ALIGN
+    } else if (curr === RIGHT_ALIGN) {
+      alignNext = RIGHT_ALIGN
+    } else {
+      if (alignNext === LEFT_ALIGN) {
+        leftElements.push(curr)
+      } else {
+        rightElements.push(curr)
+      }
+    }
+  }
+
+  if (align === LEFT_ALIGN) {
+    return leftElements
+  } else if (align === RIGHT_ALIGN) {
+    return rightElements
+  } else {
+    return {
+      left: leftElements,
+      right: rightElements
+    }
+  }
+}
+
 
 function GeneratorDom () {
   this.generator = new Generator()
@@ -367,7 +401,7 @@ GeneratorDom.prototype.initDropdowns = function () {
 }
 
 GeneratorDom.prototype.addElement = function (element) {
-  this.generator.addElement(element, this.align)
+  this.generator.addElement(element)
 }
 
 GeneratorDom.prototype.update = function () {
@@ -406,22 +440,35 @@ GeneratorDom.prototype.clear = function () {
 }
 
 GeneratorDom.prototype.undo = function () {
-  let removed
-  if (this.align === LEFT_ALIGN) {
-    removed = this.generator.removeElement(LEFT_ALIGN)
-  } else {
-    removed = this.generator.removeElement(RIGHT_ALIGN)
-  }
+  let removed, realign
+  do {
+    removed = this.generator.removeElement()
+    if (removed === LEFT_ALIGN) {
+      realign = RIGHT_ALIGN
+    } else if (removed === RIGHT_ALIGN) {
+      realign = LEFT_ALIGN
+    }
+  } while (removed === LEFT_ALIGN || removed === RIGHT_ALIGN)
+
   if (removed != null && removed.title.startsWith('btnColour')) {
     let button = document.getElementById(removed.title)
     document.getElementById('options').removeChild(button)
     this.colourButtons.pop()
   }
+
+  if (realign != null) {
+    this.align = realign
+    this.setAlign(realign)
+  }
   this.update()
 }
 
 GeneratorDom.prototype.setAlign = function (align) {
-  this.align = align
+  if (this.align != align) {
+    this.generator.addElement(align)
+    this.align = align
+  }
+
   if (this.align === LEFT_ALIGN) {
     document.getElementById('leftButton').setAttribute('style', 'border: 4px inset black')
     document.getElementById('rightButton').setAttribute('style', '')
@@ -455,6 +502,7 @@ GeneratorDom.prototype.addColour = function (foreground, background) {
     }, false)
     form.appendChild(colourButton)
     this.colourButtons.push(colourButton)
+    this.addElement(colourElement)
     return colourElement
   } else {
     alert('Vim only allows for 8 colours! Please remove a colour by undoing')
