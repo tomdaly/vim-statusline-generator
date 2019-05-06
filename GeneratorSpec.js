@@ -15,64 +15,72 @@ describe('testGenerator', function () {
     })
 
     it('elements should be empty on initialise', function () {
-      expect(testGenerator.leftElements.length).toEqual(0)
-      expect(testGenerator.rightElements.length).toEqual(0)
+      expect(testGenerator.elements.length).toEqual(0)
     })
 
     it('should clear elements', function () {
-      testGenerator.leftElements.push('a')
-      testGenerator.rightElements.push('a')
-      expect(testGenerator.leftElements.length).toEqual(1)
-      expect(testGenerator.rightElements.length).toEqual(1)
+      testGenerator.elements.push('a')
+      expect(testGenerator.elements.length).toEqual(1)
       testGenerator.removeAllElements()
-      expect(testGenerator.leftElements.length).toEqual(0)
-      expect(testGenerator.rightElements.length).toEqual(0)
+      expect(testGenerator.elements.length).toEqual(0)
+    })
+
+    it('should remove last element', function () {
+      testGenerator.addElement(testElement)
+      expect(testGenerator.elements.length).toEqual(1)
+
+      testGenerator.removeElement()
+      expect(testGenerator.elements.length).toEqual(0)
+    })
+
+    it('should add element to left', function () {
+      testGenerator.addElement(testElement)
+      expect(testGenerator.elements.length).toEqual(1)
+    })
+
+    it ('should split left and right elements', function () {
+      testGenerator.addElement(testElement)
+      testGenerator.addElement(RIGHT_ALIGN)
+      testGenerator.addElement(testElement)
+      testGenerator.addElement(testElement)
+
+      let left = testGenerator.splitElements(LEFT_ALIGN)
+      let right = testGenerator.splitElements(RIGHT_ALIGN)
+
+      expect(left.length).toEqual(1)
+      expect(right.length).toEqual(2)
     })
 
     describe('if align is left', function () {
-      it('should add element to left', function () {
-        testGenerator.addElement(testElement, LEFT_ALIGN)
-        expect(testGenerator.leftElements.length).toEqual(1)
-      })
-
       it('should build statusline preview', function () {
-        testGenerator.leftElements.push(testElement)
-        let preview = testGenerator.buildPreview(LEFT_ALIGN)
+        testGenerator.addElement(LEFT_ALIGN)
+        testGenerator.addElement(testElement)
+        let preview = testGenerator.buildPreview(LEFT_ALIGN);
 
         expect(preview).toEqual('[+]')
       })
 
       it('should build statusline code', function () {
-        testGenerator.leftElements.push(testElement)
+        testGenerator.addElement(LEFT_ALIGN)
+        testGenerator.addElement(testElement)
         let out = testGenerator.buildOutput()
 
         expect(out).toEqual('set laststatus=2\nset statusline=\nset statusline+=%m\n')
       })
-
-      it('should remove last left element', function () {
-        testGenerator.leftElements.push(testElement)
-        expect(testGenerator.leftElements.length).toEqual(1)
-
-        testGenerator.removeElement(LEFT_ALIGN)
-        expect(testGenerator.leftElements.length).toEqual(0)
-      })
     })
 
     describe('if align is right', function () {
-      it('should add element to right', function () {
-        testGenerator.addElement(testElement, RIGHT_ALIGN)
-        expect(testGenerator.rightElements.length).toEqual(1)
-      })
-
       it('should build statusline preview', function () {
-        testGenerator.rightElements.push(testElement)
+        testGenerator.addElement(RIGHT_ALIGN)
+        testGenerator.addElement(testElement)
         let preview = testGenerator.buildPreview(RIGHT_ALIGN)
 
         expect(preview).toEqual('[+]')
       })
 
       it('should build statusline code', function () {
-        testGenerator.rightElements.push(testElement)
+        testGenerator.addElement(RIGHT_ALIGN)
+        testGenerator.addElement(testElement)
         let out = testGenerator.buildOutput()
 
         expect(out).toEqual('set laststatus=2\nset statusline=\nset statusline+=%=\nset statusline+=%m\n')
@@ -127,26 +135,26 @@ describe('testGenerator', function () {
     })
 
     it('should add element to left', function () {
-      testGenDom.setAlign(LEFT_ALIGN)
       testGenDom.addElement(testElement)
-      expect(testGenDom.generator.leftElements.length).toEqual(1)
+      expect(testGenDom.generator.elements.length).toEqual(2)
     })
 
     it('should add element to right', function () {
       testGenDom.setAlign(RIGHT_ALIGN)
       testGenDom.addElement(testElement)
-      expect(testGenDom.generator.rightElements.length).toEqual(1)
+      expect(testGenDom.generator.elements.length).toEqual(3)
     })
 
     it('should update output', function () {
-      testGenDom.generator.addElement(testElement, LEFT_ALIGN)
+      testGenDom.generator.addElement(testElement)
       testGenDom.updateOutput()
 
       expect(output.value).toEqual('set laststatus=2set statusline=set statusline+=%m')
     })
 
     it('should update preview text on left', function () {
-      testGenDom.generator.addElement(testElement, LEFT_ALIGN)
+      testGenDom.setAlign(LEFT_ALIGN)
+      testGenDom.generator.addElement(testElement)
       testGenDom.updatePreview()
 
       expect(leftPreview.innerHTML).toEqual('[+]')
@@ -154,7 +162,7 @@ describe('testGenerator', function () {
 
     it('should update preview text on right', function () {
       testGenDom.setAlign(RIGHT_ALIGN)
-      testGenDom.generator.addElement(testElement, RIGHT_ALIGN)
+      testGenDom.generator.addElement(testElement)
       testGenDom.updatePreview()
       expect(rightPreview.innerHTML).toEqual('[+]')
     })
@@ -170,27 +178,25 @@ describe('testGenerator', function () {
       expect(rightPreview.innerHTML).toEqual('')
     })
 
-    it('should undo last added element', function () {
-      testGenDom.generator.addElement(testElement, LEFT_ALIGN)
-      testGenDom.generator.addElement(testElement, LEFT_ALIGN)
-      expect(testGenDom.generator.leftElements.length).toEqual(2)
+    it('should undo last added element and align element', function () {
+      testGenDom.generator.addElement(testElement)
+      testGenDom.generator.addElement(LEFT_ALIGN)
+      expect(testGenDom.generator.elements.length).toEqual(3)
 
       testGenDom.undo()
 
-      expect(testGenDom.generator.leftElements.length).toEqual(1)
+      expect(testGenDom.generator.elements.length).toEqual(1)
     })
 
     it('should change foreground and background colours', function () {
-      let element = testGenDom.addColour('green', 'lightgray')
-      testGenDom.generator.addElement(element, LEFT_ALIGN)
-      testGenDom.generator.addElement(testElement, LEFT_ALIGN)
+      testGenDom.addColour('green', 'lightgray')
+      testGenDom.generator.addElement(testElement)
       testGenDom.updatePreview()
       expect(leftPreview.innerHTML).toEqual('<span style="color:green;background-color:lightgray;">[+]</span>')
     })
 
     it('should undo and remove button', function () {
-      let element = testGenDom.addColour('green', 'lightgray')
-      testGenDom.generator.addElement(element, LEFT_ALIGN)
+      testGenDom.addColour('green', 'lightgray')
       testGenDom.update()
       expect(testGenDom.colourButtons.length).toEqual(1)
 
